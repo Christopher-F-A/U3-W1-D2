@@ -1,9 +1,20 @@
-import "./App.css";
+import MyNav from "./components/MyNav";
+import MyFooter from "./components/MyFooter";
+import Welcome from "./components/Welcome";
+import AllTheBooks from "./components/AllTheBooks";
+import Container from "react-bootstrap/Container";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <></>;
+  return (
+    <>
+      <MyNav />
+      <Container className="mt-4">
+        <Welcome />
+        <AllTheBooks />
+      </Container>
+      <MyFooter />
+    </>
+  );
 }
 
 export default App;
