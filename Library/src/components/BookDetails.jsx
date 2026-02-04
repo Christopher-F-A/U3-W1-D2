@@ -4,7 +4,7 @@ const BookDetails = ({ book }) => {
   if (!book) return null;
 
   return (
-    <Card className="mt-4">
+    <Card className="mt-4 bg-warning">
       <Card.Body>
         <Card.Title>{book.title}</Card.Title>
         <Card.Text>
