@@ -13,14 +13,17 @@ class CommentArea extends Component {
 
   fetchComments = async () => {
     try {
-      const response = await fetch(API_URL + this.props.asin, {
+      const response = await fetch(`https://striveschool-api.herokuapp.com/api/comments/${this.props.asin}`, {
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: TOKEN,
         },
       });
+
       if (response.ok) {
         const data = await response.json();
         this.setState({ comments: data });
+      } else {
+        console.error("Errore nel fetch dei commenti");
       }
     } catch (error) {
       console.error(error);
