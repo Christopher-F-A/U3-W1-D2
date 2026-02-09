@@ -1,31 +1,40 @@
-import { useState } from "react";
+import { Component } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import Alert from "react-bootstrap/Alert";
 import SingleBook from "./SingleBook";
+import CommentArea from "./CommentArea";
 
-const BookList = ({ books, onBookSelect }) => {
-  const [search, setSearch] = useState("");
+class BookList extends Component {
+  state = {
+    selectedAsin: null,
+  };
 
-  const filteredBooks = books.filter((book) => book.title.toLowerCase().includes(search.toLowerCase()));
+  handleBookSelect = (asin) => {
+    this.setState({ selectedAsin: asin });
+  };
 
-  return (
-    <>
-      {/* Campo di ricerca */}
-      <Form.Group className="mb-4">
-        <Form.Control type="text" placeholder="Cerca un libro..." value={search} onChange={(e) => setSearch(e.target.value)} />
-      </Form.Group>
+  render() {
+    return (
+      <Row>
+        {/* COLONNA SINISTRA */}
+        <Col md={8}>
+          <Row>
+            {this.props.books.map((book) => (
+              <Col md={3} key={book.asin} className="mb-3">
+                <SingleBook book={book} isSelected={this.state.selectedAsin === book.asin} onSelect={() => this.handleBookSelect(book.asin)} />
+              </Col>
+            ))}
+          </Row>
+        </Col>
 
-      {/* Griglia libri */}
-      <Row className="g-4">
-        {filteredBooks.map((book) => (
-          <Col key={book.asin} xs={12} sm={6} md={4} lg={3}>
-            <SingleBook book={book} onBookSelect={onBookSelect} />
-          </Col>
-        ))}
+        {/* COLONNA DESTRA */}
+        <Col md={4}>
+          {this.state.selectedAsin ? <CommentArea asin={this.state.selectedAsin} /> : <Alert variant="info">Seleziona un libro per vedere i commenti</Alert>}
+        </Col>
       </Row>
-    </>
-  );
-};
+    );
+  }
+}
 
 export default BookList;

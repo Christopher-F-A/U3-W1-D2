@@ -3,7 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 const SingleComment = ({ comment }) => {
   return (
     <ListGroup.Item>
-      <strong>{comment.rate}/5</strong> – {comment.comment}
+      <strong>{comment.rate} stelle</strong> – {comment.comment}
     </ListGroup.Item>
   );
 };
