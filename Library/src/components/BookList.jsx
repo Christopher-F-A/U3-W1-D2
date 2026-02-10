@@ -10,18 +10,18 @@ const BookList = ({ books }) => {
 
   return (
     <Row>
-      {/* SINISTRA */}
+      {/* COLONNA SINISTRA */}
       <Col md={8}>
         <Row>
           {books.map((book) => (
             <Col md={3} key={book.asin} className="mb-3">
-              <SingleBook book={book} isSelected={selectedAsin === book.asin} onSelect={() => setSelectedAsin(book.asin)} />
+              <SingleBook book={book} onSelect={() => setSelectedAsin(book.asin)} isSelected={selectedAsin === book.asin} />
             </Col>
           ))}
         </Row>
       </Col>
 
-      {/* DESTRA */}
+      {/* COLONNA DESTRA */}
       <Col md={4}>{selectedAsin ? <CommentArea asin={selectedAsin} /> : <Alert variant="info">Seleziona un libro per vedere i commenti 📚</Alert>}</Col>
     </Row>
   );
