@@ -2,12 +2,18 @@ import ListGroup from "react-bootstrap/ListGroup";
 import SingleComment from "./SingleComment";
 
 const CommentsList = ({ comments }) => {
+  if (!comments.length) {
+    return <p>Nessun commento per questo libro</p>;
+  }
+
   return (
-    <ListGroup className="mt-2">
+    <ul>
       {comments.map((c) => (
-        <SingleComment key={c._id} comment={c} />
+        <li key={c._id}>
+          {c.comment} ({c.rate}/5)
+        </li>
       ))}
-    </ListGroup>
+    </ul>
   );
 };
 

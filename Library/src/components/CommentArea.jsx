@@ -1,61 +1,48 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import CommentsList from "./CommentsList";
 import AddComment from "./AddComment";
 
-const TOKEN = "Bearer IL_TUO_TOKEN_QUI";
+const TOKEN =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTczM2VkNDg1ZTNiMTAwMTViNWVkOTciLCJpYXQiOjE3NzAzMDQ5NjksImV4cCI6MTc3MTUxNDU2OX0.dDFjVBa5EbRxWoKP-8e8pWb1LZMrqM5dBuioNiuN-jM";
 
-class CommentArea extends Component {
-  state = {
-    comments: [],
-    isLoading: false,
-  };
+const CommentArea = ({ asin }) => {
+  const [comments, setComments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  componentDidMount() {
-    if (this.props.asin) {
-      this.fetchComments();
-    }
-  }
+  useEffect(() => {
+    if (!asin) return;
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.asin !== this.props.asin) {
-      this.fetchComments();
-    }
-  }
+    const fetchComments = async () => {
+      setIsLoading(true);
 
-  fetchComments = async () => {
-    this.setState({ isLoading: true });
+      try {
+        const response = await fetch(`https://striveschool-api.herokuapp.com/api/comments/${asin}`, {
+          headers: {
+            Authorization: TOKEN,
+          },
+        });
 
-    try {
-      const response = await fetch(`https://striveschool-api.herokuapp.com/api/comments/${this.props.asin}`, {
-        headers: {
-          Authorization: TOKEN,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        this.setState({ comments: data, isLoading: false });
-      } else {
-        console.error("Errore fetch commenti");
-        this.setState({ isLoading: false });
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error(error);
-      this.setState({ isLoading: false });
-    }
-  };
+    };
 
-  render() {
-    return (
-      <>
-        {this.state.isLoading && <p>Caricamento commenti...</p>}
+    fetchComments();
+  }, [asin]);
 
-        <CommentsList comments={this.state.comments} />
-
-        <AddComment asin={this.props.asin} refreshComments={this.fetchComments} />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      {isLoading && <p>Caricamento commenti...</p>}
+      <CommentsList comments={comments} />
+      <AddComment asin={asin} refreshComments={() => setComments([])} />
+    </>
+  );
+};
 
 export default CommentArea;

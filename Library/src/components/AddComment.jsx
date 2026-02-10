@@ -1,74 +1,64 @@
-import { Component } from "react";
+import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-const API_URL = "https://striveschool-api.herokuapp.com/api/comments/";
 const TOKEN =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTczM2VkNDg1ZTNiMTAwMTViNWVkOTciLCJpYXQiOjE3NzAzMDQ5NjksImV4cCI6MTc3MTUxNDU2OX0.dDFjVBa5EbRxWoKP-8e8pWb1LZMrqM5dBuioNiuN-jM";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTczM2VkNDg1ZTNiMTAwMTViNWVkOTciLCJpYXQiOjE3NzAzMDQ5NjksImV4cCI6MTc3MTUxNDU2OX0.dDFjVBa5EbRxWoKP-8e8pWb1LZMrqM5dBuioNiuN-jM";
 
-class AddComment extends Component {
-  state = {
+const AddComment = ({ asin }) => {
+  const [formData, setFormData] = useState({
     comment: "",
     rate: "1",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  handleSubmit = async (e) => {
+  const submitComment = async (e) => {
     e.preventDefault();
 
-    const newComment = {
-      comment: this.state.comment,
-      rate: this.state.rate,
-      elementId: this.props.asin,
-    };
-
     try {
-      const response = await fetch(API_URL, {
+      await fetch("https://striveschool-api.herokuapp.com/api/comments/", {
         method: "POST",
         headers: {
+          Authorization: TOKEN,
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTczM2VkNDg1ZTNiMTAwMTViNWVkOTciLCJpYXQiOjE3NzAzMDQ5NjksImV4cCI6MTc3MTUxNDU2OX0.dDFjVBa5EbRxWoKP-8e8pWb1LZMrqM5dBuioNiuN-jM`,
         },
-        body: JSON.stringify(newComment),
+        body: JSON.stringify({
+          ...formData,
+          elementId: asin,
+        }),
       });
 
-      if (response.ok) {
-        this.setState({ comment: "", rate: "1" });
-        this.props.onCommentAdded();
-      }
+      setFormData({ comment: "", rate: "1" });
     } catch (error) {
       console.error(error);
     }
   };
 
-  render() {
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Group className="mb-2">
-          <Form.Control
-            type="text"
-            placeholder="Scrivi un commento..."
-            value={this.state.comment}
-            onChange={(e) => this.setState({ comment: e.target.value })}
-            required
-          />
-        </Form.Group>
+  return (
+    <Form onSubmit={submitComment} className="mt-3">
+      <Form.Group>
+        <Form.Control name="comment" value={formData.comment} onChange={handleChange} placeholder="Scrivi un commento" />
+      </Form.Group>
 
-        <Form.Group className="mb-2">
-          <Form.Select value={this.state.rate} onChange={(e) => this.setState({ rate: e.target.value })}>
-            {[1, 2, 3, 4, 5].map((num) => (
-              <option key={num} value={num}>
-                {num}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
+      <Form.Group className="mt-2">
+        <Form.Select name="rate" value={formData.rate} onChange={handleChange}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <option key={n}>{n}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
 
-        <Button type="submit" variant="primary">
-          Invia recensione
-        </Button>
-      </Form>
-    );
-  }
-}
+      <Button type="submit" className="mt-2">
+        Invia
+      </Button>
+    </Form>
+  );
+};
 
 export default AddComment;
